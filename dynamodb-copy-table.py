@@ -54,8 +54,6 @@ try:
                      )
 
     table_struct = new_logs.describe()
-#    print 'Table %s already exists' % dst_table
-#    sys.exit(0)
 except JSONResponseError:
     schema = [HashKey(hash_key)]
     if range_key != '':
@@ -64,15 +62,6 @@ except JSONResponseError:
                             connection=ddbc,
                             schema=schema,
                             )
-    print '*** Waiting for the new table %s to become active' % dst_table
-    sleep(5)
-    while ddbc.describe_table(dst_table)['Table']['TableStatus'] != 'ACTIVE':
-        sleep(3)
-
-if 'DISABLE_DATACOPY' in os.environ:
-    print 'Copying of data from source table is disabled. Exiting...'
-    sys.exit(0)
-
 # 3. Add the items
 for item in logs.scan():
     new_item = {}
